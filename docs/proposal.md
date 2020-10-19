@@ -8,8 +8,7 @@ title:  Proposal
 
 ## 2.2 Summary of the Project
 
-	In the project, we plan to develop an AI agent to parkour through a map of obstacles. Inspired by https://www.minecraftmaps.com/parkour-maps/, a website that creates parkour maps for human players to challenge themselves, we plan to create our own version of parkour maps that are suitable for our agent to practice on. The maps will be 3D maps varying in difficulty with obstacles, such as walls and ladders, that require the agent to jump over while finding the fastest route to reach goal point(s). Our agent will take in the information that is the parkour map and produce the series of actions to run through it as efficiently as possible. 
-
+	
 
 ## AI/ML Algorithms
 
