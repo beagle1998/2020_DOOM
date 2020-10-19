@@ -6,7 +6,7 @@ title:  Team
 # {{ page.title }}
 
 
-## USER 1
+## Tyler Mun
 ***UCI Net ID***: ttmun
 
 ## USER 2
