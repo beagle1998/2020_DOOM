@@ -68,13 +68,18 @@ def GetMissionXML():
                         <RewardForTouchingBlockType>
                             <Block reward="-1" type="grass_block"/>
                         </RewardForTouchingBlockType>
-                        <RewardForMissionEnd>
-                            <Reward> 30 </Reward>
-                        </RewardForMissionEnd>
+                        <RewardForTouchingBlockType>
+                            <Block reward="50" type="emerald_block"/>
+                        </RewardForTouchingBlockType>
+                        <AgentQuitFromTouchingBlockType>
+                            <Block type="emerald_block>
+                        </AgentQuitFromTouchingBlockType>
                         <AgentQuitFromReachingCommandQuota total="'''+str(MAX_EPISODE_STEPS)+'''" />
                     </AgentHandlers>
                 </AgentSection>
             </Mission>'''
+# quit when reach parkour end or max steps reached
+
 
 # diamond block: path, gold block: checkpoint, emerald block: mission end
 def drawPath():
