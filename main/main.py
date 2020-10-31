@@ -18,13 +18,13 @@ def GetMissionXML():
             <Mission xmlns="http://ProjectMalmo.microsoft.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
                 <About>
-                    <Summary>Diamond Collector</Summary>
+                    <Summary>Parkour Bot</Summary>
                 </About>
 
                 <ServerSection>
                     <ServerInitialConditions>
                         <Time>
-                            <StartTime>12000</StartTime>
+                            <StartTime>0</StartTime>
                             <AllowPassageOfTime>true</AllowPassageOfTime>
                         </Time>
                         <Weather>clear</Weather>
