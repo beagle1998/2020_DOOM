@@ -1,16 +1,14 @@
 OBS_SIZE = 6
 SIZE = 30
-MAX_EPISODE_STEPS = 50
-MAX_GLOBAL_STEPS = 10000
-EPSILON_DECAY = .995
-MIN_EPSILON = .05
+MAX_EPISODE_STEPS = 10
+MAX_GLOBAL_STEPS = 5000
 ACTION_DICT = {
     0: 'move 1',  # Move forward at normal speed
     1: 'move 0',  # Stop moving
     2: 'turn -0.5',  # Turn to the left
     3: 'turn 0.5', # turn to the right
-    4: 'turn 0' # stop turning
-    5: 'jump 1'  # start jumping
+    4: 'turn 0', # stop turning
+    5: 'jump 1',  # start jumping
     6: 'jump 0' # stop jumping
 }
 
@@ -70,15 +68,20 @@ def GetMissionXML():
                         <RewardForTouchingBlockType>
                             <Block reward="-1" type="grass_block"/>
                         </RewardForTouchingBlockType>
+                        <RewardForMissionEnd>
+                            <Reward> 30 </Reward>
+                        </RewardForMissionEnd>
                         <AgentQuitFromReachingCommandQuota total="'''+str(MAX_EPISODE_STEPS)+'''" />
                     </AgentHandlers>
                 </AgentSection>
             </Mission>'''
 
+# diamond block: path, gold block: checkpoint, emerald block: mission end
 def drawPath():
     path = ""
     for i in range(10):
         path += f"<DrawBlock x='0'  y='1' z='{i}' type='diamond_block' />"
-    path += "<DrawBlock x='0'  y='1' z='10' type='gold_block' />"
+    path += "<DrawBlock x='0'  y='1' z='5' type='gold_block' />"
+    path += "<DrawBlock x='0'  y='1' z='10' type='emerald_block' />"
     return path
 
