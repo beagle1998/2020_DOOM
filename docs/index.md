@@ -11,30 +11,20 @@ Reports:
 - [Status](status.html)
 - [Final](final.html)
 
-What's Markdown (`.md`)?
 
-Markdown is markup that lets you write hypertext (HTML) documents
-in easy-to-read and easy-to-write plain text.
-No angle brackets `<></>` required for
-paragraphs, lists, blockquotes, tables, etc.
+![alt text](https://www.minecraftmaps.com/images/jdownloads/screenshots/thumbnails/2020-10-14_09.21.56.png)
 
 
-This is a paragraph (in Markdown). Some more
-text here.
-
-This is another paragraph.
-
-This is a list:
-
-- Orange
-- Apple
-- Blueberry
-
-$$x^2 = y^2$$
+Inspiration
+https://www.minecraftmaps.com/parkour-maps
 
 
-Just getting started with Markdown?
-See the [HTML <-> Markdown Quick Reference (Cheat Sheet)][quickref].
+![alt text](https://www.minecraftmaps.com/images/jdownloads/screenshots/2019-02-23_08.47.51.png)
 
 
-[quickref]: https://github.com/mundimark/quickrefs/blob/master/HTML.md
+![alt text](https://image.winudf.com/v2/image/Y29tLnNmaXZlYXBwcy5wYXJrb3VyX21hcHNfbWluZWNyYWZ0X3BlX3NjcmVlbl82XzE1Mjc1Njg4NDJfMDEx/screen-6.jpg?fakeurl=1&type=.jpg)
+
+
+
+
+
