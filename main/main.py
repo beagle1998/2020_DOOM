@@ -1,3 +1,7 @@
+
+
+
+
 OBS_SIZE = 6
 SIZE = 30
 MAX_EPISODE_STEPS = 10
@@ -78,6 +82,9 @@ def GetMissionXML():
                     </AgentHandlers>
                 </AgentSection>
             </Mission>'''
+
+
+
 # quit when reach parkour end or max steps reached
 
 
@@ -89,4 +96,5 @@ def drawPath():
     path += "<DrawBlock x='0'  y='1' z='5' type='gold_block' />"
     path += "<DrawBlock x='0'  y='1' z='10' type='emerald_block' />"
     return path
+
 

@@ -12,11 +12,13 @@ Reports:
 - [Final](final.html)
 
 
-![alt text](https://www.minecraftmaps.com/images/jdownloads/screenshots/thumbnails/2020-10-14_09.21.56.png)
-
-
 Inspiration
 https://www.minecraftmaps.com/parkour-maps
+
+## Summary 
+In the project, we plan to develop an AI agent to parkour through a map of obstacles. Inspired by [minecraft parkour maps](https://www.minecraftmaps.com/parkour-maps/), a website that creates parkour maps for human players to challenge themselves, we plan to create our own version of parkour maps that are suitable for our agent to practice on. The maps will be 3D maps varying in difficulty with obstacles, such as walls and ladders, that require the agent to jump over while finding the fastest route to reach goal point(s). Our agent will take in the information that is the parkour map and produce the series of actions to run through it as efficiently as possible.  
+
+![alt text](https://www.minecraftmaps.com/images/jdownloads/screenshots/thumbnails/2020-10-14_09.21.56.png)
 
 
 ![alt text](https://www.minecraftmaps.com/images/jdownloads/screenshots/2019-02-23_08.47.51.png)
