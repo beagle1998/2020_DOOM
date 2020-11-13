@@ -49,6 +49,7 @@ OBS_SIZE = 5
 #SIZE = 30
 MAX_EPISODE_STEPS = 50
 MAX_GLOBAL_STEPS = 10000
+#jumpmove discrete    <DiscreteMovementCommands/>
 ACTION_DICT = {
     0: 'move 1.5',  # Move forward at normal speed
     1: 'turn -0.1',  # Turn to the left
@@ -57,6 +58,17 @@ ACTION_DICT = {
 
 
 }
+#jon-
+ACTION_DICT = {
+    0: 'move 1', # Move forward at normal speed
+    1: 'move 0', # Stop moving
+    2: 'turn -0.5',# Turn to the left
+    3: 'turn 0', # Stop turning
+    4: 'turn 0.5', # turn to the right
+    5: 'jump 1', # start jumping
+    6: 'jump 0'  # stop jumping
+}
+
 
 reward1=0
 
@@ -109,7 +121,7 @@ def GetMissionXML():
             <Mission xmlns="http://ProjectMalmo.microsoft.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
                 <About>
-                    <Summary>Diamond Collector</Summary>
+                    <Summary>Parkour Bot</Summary>
                 </About>
 
                 <ServerSection>
@@ -136,7 +148,7 @@ def GetMissionXML():
                 </ServerSection>
 
                 <AgentSection mode="Survival">
-                    <Name>CS175DiamondCollector</Name>
+                    <Name>CS175ParkourBot</Name>
                     <AgentStart>
                         <Placement x="0.5" y="2" z="0.5" pitch="45" yaw="0"/>
                         <Inventory>
@@ -144,7 +156,7 @@ def GetMissionXML():
                         </Inventory>
                     </AgentStart>
                     <AgentHandlers>
-                        <DiscreteMovementCommands/>
+                        <ContinuousMovementCommands/>
                         <ObservationFromFullStats/>
                         <ObservationFromGrid>
                             <Grid name="floorAll">
@@ -154,13 +166,14 @@ def GetMissionXML():
                         </ObservationFromGrid>
                         <RewardForTouchingBlockType>
                             <Block reward="1" type="gold_block"/>
+                            <Block reward="-1" type="stone"/>
                             <Block reward="50" type="emerald_block"/>
                             <Block reward="1" type="diamond_block"/>
                             <Block reward="-1" type="grass"/>
                             <Block reward="-10" type="lava"/>
-                            <Block reward="-1" type="stone"/>
                         </RewardForTouchingBlockType>
                         <AgentQuitFromTouchingBlockType>
+                            <Block type="lava"/>
                             <Block type ="emerald_block"/>
                         </AgentQuitFromTouchingBlockType>
                         <AgentQuitFromReachingCommandQuota total="'''+str(MAX_EPISODE_STEPS)+'''" />
@@ -206,7 +219,7 @@ def get_action(obs, q_network, epsilon, allow_break_action):
    # print(epsilon)
     if xx<epsilon:#higher the epsilon, the greater the probability of doing a random action
         
-        yy=random.randint(0,3) #ITS NOT INCLUSIVE??? RAND INT DOES UP TO B-1
+        yy=random.randint(0,6) #ITS NOT INCLUSIVE??? RAND INT DOES UP TO B-1
         #if random.random()>.5:
             #return yy,6             #jump is .5 percent probably
         #return yy,7
@@ -249,7 +262,7 @@ def init_malmo(agent_host):
 
     for retry in range(max_retries):
         try:
-            agent_host.startMission( my_mission, my_clients, my_mission_record, 0, "DiamondCollector" )
+            agent_host.startMission( my_mission, my_clients, my_mission_record, 0, "ParkourBot" )
             break
         except RuntimeError as e:
             if retry == max_retries - 1:
