@@ -47,16 +47,15 @@ ACTION_DICT = {
 
 OBS_SIZE = 5
 #SIZE = 30
-MAX_EPISODE_STEPS = 10
-MAX_GLOBAL_STEPS = 5000
+MAX_EPISODE_STEPS = 50
+MAX_GLOBAL_STEPS = 10000
 ACTION_DICT = {
-    0: 'move 1',  # Move forward at normal speed
-    1: 'move 0',  # Stop moving
-    2: 'turn -0.5',  # Turn to the left
-    3: 'turn 0.5', # turn to the right
-    4: 'turn 0', # stop turning
-    5: 'jump 1',  # start jumping
-    6: 'jump 0' # stop jumping
+    0: 'move 1.5',  # Move forward at normal speed
+    1: 'turn -0.1',  # Turn to the left
+    2: 'turn -0.1', # turn to the right
+    3: 'jumpmove 1',  # start jumping
+
+
 }
 
 reward1=0
@@ -97,7 +96,7 @@ def drawPath():
     path = ''
     for i in range(10):
         path += f"<DrawBlock x='0'  y='1' z='{i}' type='diamond_block' />"
-    path += "<DrawBlock x='0'  y='1' z='5' type='gold_block' />"
+    path += "<DrawBlock x='0'  y='2' z='5' type='gold_block' />"
     path += "<DrawBlock x='0'  y='1' z='10' type='emerald_block' />"
     return path
 
@@ -125,7 +124,7 @@ def GetMissionXML():
                         <FlatWorldGenerator generatorString="3;7,2;1;"/>
                         <DrawingDecorator>''' + \
                             "<DrawCuboid x1='{}' x2='{}' y1='2' y2='2' z1='{}' z2='{}' type='air'/>".format(-SIZE, SIZE, -SIZE, SIZE) + \
-                            "<DrawCuboid x1='{}' x2='{}' y1='1' y2='1' z1='{}' z2='{}' type='grass'/>".format(-SIZE, SIZE, -SIZE, SIZE) + \
+                            "<DrawCuboid x1='{}' x2='{}' y1='1' y2='1' z1='{}' z2='{}' type='lava'/>".format(-SIZE, SIZE, -SIZE, SIZE) + \
                             drawPath() + \
                             '''<DrawBlock x='0'  y='2' z='0' type='air' />
                             <DrawBlock x='0'  y='1' z='0' type='stone' />
@@ -154,11 +153,12 @@ def GetMissionXML():
                             </Grid>
                         </ObservationFromGrid>
                         <RewardForTouchingBlockType>
-                            <Block reward="10" type="gold_block"/>
+                            <Block reward="1" type="gold_block"/>
                             <Block reward="50" type="emerald_block"/>
-                            <Block reward="10" type="diamond_block"/>
-                            <Block reward="-10" type="grass"/>
-                            <Block reward="50" type="emerald_block"/>
+                            <Block reward="1" type="diamond_block"/>
+                            <Block reward="-1" type="grass"/>
+                            <Block reward="-10" type="lava"/>
+                            <Block reward="-1" type="stone"/>
                         </RewardForTouchingBlockType>
                         <AgentQuitFromTouchingBlockType>
                             <Block type ="emerald_block"/>
@@ -207,7 +207,11 @@ def get_action(obs, q_network, epsilon, allow_break_action):
     if xx<epsilon:#higher the epsilon, the greater the probability of doing a random action
         
         yy=random.randint(0,3) #ITS NOT INCLUSIVE??? RAND INT DOES UP TO B-1
+        #if random.random()>.5:
+            #return yy,6             #jump is .5 percent probably
+        #return yy,7
         return yy
+        
 
     
 
@@ -413,14 +417,19 @@ def train(agent_host):
                 print("\nError:",error.text)
         obs = get_observation(world_state)
 
+    
         # Run episode
         while world_state.is_mission_running:
             # Get action
             allow_break_action = obs[1, int(OBS_SIZE/2)-1, int(OBS_SIZE/2)] == 1
-            action_idx = get_action(obs, q_network, epsilon, allow_break_action)
-            command = ACTION_DICT[action_idx]
+            action_idx1 = get_action(obs, q_network, epsilon, allow_break_action)
+            command = ACTION_DICT[action_idx1]
+            #command2=ACTION_DICT[action_idx2]
 
             # Take step
+
+            #agent_host.sendCommand("move .5")
+            
             agent_host.sendCommand(command)
 
             # If your agent isn't registering reward you may need to increase this
@@ -449,7 +458,7 @@ def train(agent_host):
             episode_return += reward
 
             # Store step in replay buffer
-            replay_buffer.append((obs, action_idx, next_obs, reward, done))
+            replay_buffer.append((obs, action_idx1, next_obs, reward, done))
             obs = next_obs
 
             # Learn
