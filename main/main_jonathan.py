@@ -84,7 +84,7 @@ def drawPath():
     path = ''
     for i in range(10):
         path += f"<DrawBlock x='0'  y='1' z='{i}' type='diamond_block' />"
-    path += "<DrawBlock x='0'  y='1' z='5' type='gold_block' />"
+    path += "<DrawBlock x='0'  y='2' z='5' type='gold_block' />"
     path += "<DrawBlock x='0'  y='1' z='10' type='emerald_block' />"
     return path
 
@@ -92,12 +92,11 @@ def drawPath():
 
 def GetMissionXML():
 
-
     return '''<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
             <Mission xmlns="http://ProjectMalmo.microsoft.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
                 <About>
-                    <Summary>Diamond Collector</Summary>
+                    <Summary>Parkour_Bot</Summary>
                 </About>
 
                 <ServerSection>
@@ -138,11 +137,11 @@ def GetMissionXML():
                             </Grid>
                         </ObservationFromGrid>
                         <RewardForTouchingBlockType>
-                            <Block reward="10" type="gold_block"/>
-                            <Block reward="1" type ="diamond_block"/>
-                            <Block reward="50" type="emerald_block"/>
-                            <Block reward="-10" type="stone">
+                            <Block reward="50" type="gold_block"/>
+                            <Block reward="100" type="emerald_block"/>
+                            <Block reward="10" type="diamond_block"/>
                             <Block reward="-50" type="lava"/>
+                            <Block reward="-30" type="stone"/>
                         </RewardForTouchingBlockType>
                         <AgentQuitFromTouchingBlockType>
                             <Block type ="emerald_block"/>
@@ -215,7 +214,7 @@ def init_malmo(agent_host):
 
     for retry in range(max_retries):
         try:
-            agent_host.startMission( my_mission, my_clients, my_mission_record, 0, "DiamondCollector" )
+            agent_host.startMission( my_mission, my_clients, my_mission_record, 0, "Parkour_Bot" )
             break
         except RuntimeError as e:
             if retry == max_retries - 1:
@@ -329,7 +328,7 @@ def log_returns(steps, returns):
     returns_smooth = np.convolve(returns, box, mode='same')
     plt.clf()
     plt.plot(steps, returns_smooth)
-    plt.title('Diamond Collector')
+    plt.title('Parkour_Bot')
     plt.ylabel('Return')
     plt.xlabel('Steps')
     plt.savefig('returns.png')
@@ -462,20 +461,4 @@ if __name__ == '__main__':
         exit(0)
 
     train(agent_host)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
