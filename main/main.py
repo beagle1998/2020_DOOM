@@ -28,7 +28,7 @@ MAX_EPISODE_STEPS = 100
 MAX_GLOBAL_STEPS = 10000
 REPLAY_BUFFER_SIZE = 10000
 EPSILON_DECAY = .999
-MIN_EPSILON = .1
+MIN_EPSILON = .05
 BATCH_SIZE = 128
 GAMMA = .9
 TARGET_UPDATE = 100
@@ -68,7 +68,7 @@ def GetMissionXML():
                         <FlatWorldGenerator generatorString="3;7,2;1;"/>
                         <DrawingDecorator>''' + \
                             "<DrawCuboid x1='{}' x2='{}' y1='2' y2='2' z1='{}' z2='{}' type='air'/>".format(-SIZE, SIZE, -SIZE, SIZE) + \
-                            "<DrawCuboid x1='{}' x2='{}' y1='1' y2='1' z1='{}' z2='{}' type='lava'/>".format(-SIZE, SIZE, -SIZE, SIZE) + \
+                            "<DrawCuboid x1='{}' x2='{}' y1='1' y2='1' z1='{}' z2='{}' type='stone'/>".format(-SIZE, SIZE, -SIZE, SIZE) + \
                             drawPath() + \
                             '''<DrawBlock x='0'  y='2' z='0' type='air' />
                             <DrawBlock x='0'  y='1' z='0' type='stone' />
@@ -92,20 +92,18 @@ def GetMissionXML():
                         <ObservationFromFullStats/>
                         <ObservationFromGrid>
                             <Grid name="floorAll">
-                                <min x="-'''+str(int(OBS_SIZE/2))+'''" y="-1" z="-'''+str(int(OBS_SIZE/2))+'''"/>
-                                <max x="'''+str(int(OBS_SIZE/2))+'''" y="0" z="'''+str(int(OBS_SIZE/2))+'''"/>
+                                <min x="-'''+str(int(OBS_SIZE/2))+'''" y="1" z="-'''+str(int(OBS_SIZE/2))+'''"/>
+                                <max x="'''+str(int(OBS_SIZE/2))+'''" y="2" z="'''+str(int(OBS_SIZE/2))+'''"/>
                             </Grid>
                         </ObservationFromGrid>
                         <RewardForTouchingBlockType>
-                            <Block reward="1" type="gold_block"/>
+                            <Block reward="5" type="gold_block"/>
                             <Block reward="-1" type="stone"/>
                             <Block reward="50" type="emerald_block"/>
                             <Block reward="1" type="diamond_block"/>
-                            <Block reward="-1" type="grass"/>
                             <Block reward="-10" type="lava"/>
                         </RewardForTouchingBlockType>
                         <AgentQuitFromTouchingBlockType>
-                            <Block type="lava"/>
                             <Block type ="emerald_block"/>
                         </AgentQuitFromTouchingBlockType>
                         <AgentQuitFromReachingCommandQuota total="'''+str(MAX_EPISODE_STEPS)+'''" />
@@ -118,7 +116,10 @@ def GetMissionXML():
 def drawPath():
     path = ""
     for i in range(10):
-        path += f"<DrawBlock x='0'  y='1' z='{i}' type='diamond_block' />"
+        path += f"<DrawBlock x='0'  y='1' z='{i}' type='diamond_block' />" \
+                f"<DrawBlock x='1'  y='1' z='{i}' type='stone' />" \
+                f"<DrawBlock x='-1'  y='1' z='{i}' type='stone' />"
+
     path += "<DrawBlock x='0'  y='1' z='5' type='gold_block' />"
     path += "<DrawBlock x='0'  y='1' z='10' type='emerald_block' />"
     return path
