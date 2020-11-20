@@ -53,7 +53,7 @@ def GetMissionXML():
             <Mission xmlns="http://ProjectMalmo.microsoft.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
                 <About>
-                    <Summary>Parkour Bot</Summary>
+                    <Summary>Parkour_Bot</Summary>
                 </About>
 
                 <ServerSection>
@@ -67,61 +67,104 @@ def GetMissionXML():
                     <ServerHandlers>
                         <FlatWorldGenerator generatorString="3;7,2;1;"/>
                         <DrawingDecorator>''' + \
-                            "<DrawCuboid x1='{}' x2='{}' y1='2' y2='2' z1='{}' z2='{}' type='air'/>".format(-SIZE, SIZE, -SIZE, SIZE) + \
-                            "<DrawCuboid x1='{}' x2='{}' y1='1' y2='1' z1='{}' z2='{}' type='stone'/>".format(-SIZE, SIZE, -SIZE, SIZE) + \
-                            drawPath() + \
-                            '''<DrawBlock x='0'  y='2' z='0' type='air' />
-                            <DrawBlock x='0'  y='1' z='0' type='stone' />
-                            
+                           "<DrawCuboid x1='{}' x2='{}' y1='2' y2='2' z1='{}' z2='{}' type='air'/>".format(-SIZE, SIZE, -SIZE, SIZE) + \
+                           "<DrawCuboid x1='{}' x2='{}' y1='1' y2='1' z1='{}' z2='{}' type='lava'/>".format(-SIZE, SIZE, -SIZE, SIZE) + \
+                           drawPath() + \
+                           '''<DrawBlock x='0'  y='2' z='0' type='air' />
+                           <DrawBlock x='0'  y='1' z='0' type='stone' />
 
-                        </DrawingDecorator>
-                        <ServerQuitWhenAnyAgentFinishes/>
-                    </ServerHandlers>
+
+                       </DrawingDecorator>
+                       <ServerQuitWhenAnyAgentFinishes/>
+                   </ServerHandlers>
                 </ServerSection>
-
+                
                 <AgentSection mode="Survival">
-                    <Name>CS175ParkourBot</Name>
-                    <AgentStart>
-                        <Placement x="0.5" y="2" z="0.5" pitch="45" yaw="0"/>
-                        <Inventory>
-                            <InventoryItem slot="0" type="diamond_pickaxe"/>
-                        </Inventory>
-                    </AgentStart>
-                    <AgentHandlers>
-                        <ContinuousMovementCommands/>
-                        <ObservationFromFullStats/>
-                        <ObservationFromGrid>
-                            <Grid name="floorAll">
-                                <min x="-'''+str(int(OBS_SIZE/2))+'''" y="1" z="-'''+str(int(OBS_SIZE/2))+'''"/>
-                                <max x="'''+str(int(OBS_SIZE/2))+'''" y="2" z="'''+str(int(OBS_SIZE/2))+'''"/>
-                            </Grid>
+                   <Name>CS175DiamondCollector</Name>
+                   <AgentStart>
+                       <Placement x="0.5" y="2" z="0.5" pitch="45" yaw="0"/>
+                   </AgentStart>
+                   <AgentHandlers>
+                       <ContinuousMovementCommands/>
+                       <ObservationFromFullStats/>
+                       <ObservationFromGrid>
+                           <Grid name="floorAll">
+                               <min x="-''' + str(int(OBS_SIZE / 2)) + '''" y="-1" z="-''' + str(int(OBS_SIZE / 2)) + '''"/>
+                                                <max x="''' + str(int(OBS_SIZE / 2)) + '''" y="0" z="''' + str(int(OBS_SIZE / 2)) + '''"/>
+                                            </Grid>
                         </ObservationFromGrid>
                         <RewardForTouchingBlockType>
-                            <Block reward="5" type="gold_block"/>
-                            <Block reward="-1" type="stone"/>
-                            <Block reward="50" type="emerald_block"/>
+                            <Block reward="10" type="gold_block"/>
+                            <Block reward="40" type="emerald_block"/>
                             <Block reward="1" type="diamond_block"/>
-                            <Block reward="-10" type="lava"/>
+                            <Block reward="-5" type="lava"/>
                         </RewardForTouchingBlockType>
                         <AgentQuitFromTouchingBlockType>
                             <Block type ="emerald_block"/>
                         </AgentQuitFromTouchingBlockType>
-                        <AgentQuitFromReachingCommandQuota total="'''+str(MAX_EPISODE_STEPS)+'''" />
+                        <AgentQuitFromReachingCommandQuota total="''' + str(MAX_EPISODE_STEPS) + '''" />
                     </AgentHandlers>
                 </AgentSection>
             </Mission>'''
+
 # quit when reach parkour end or max steps reached
 
 # diamond block: path, gold block: checkpoint, emerald block: mission end
 def drawPath():
+    return drawPath4()
+    return random.choice([drawStraightPath(), drawPath2(), drawPath3()])
+
+
+def drawStraightPath():
     path = ""
     for i in range(10):
-        path += f"<DrawBlock x='0'  y='1' z='{i}' type='diamond_block' />" \
-                f"<DrawBlock x='1'  y='1' z='{i}' type='stone' />" \
-                f"<DrawBlock x='-1'  y='1' z='{i}' type='stone' />"
+        path += f"<DrawBlock x='0' y='1' z='{i}' type='diamond_block' />" \
+                f"<DrawBlock x='1' y='1' z='{i}' type='stone' />" \
+                f"<DrawBlock x='-1' y='1' z='{i}' type='stone' />"
 
-    path += "<DrawBlock x='0'  y='1' z='5' type='gold_block' />"
-    path += "<DrawBlock x='0'  y='1' z='10' type='emerald_block' />"
+    path += "<DrawBlock x='0' y='1' z='5' type='gold_block' />"
+    path += "<DrawBlock x='0' y='1' z='10' type='emerald_block' />"
+    return path
+
+
+def drawPath2():
+    path = ""
+    for i in range(10):
+        path += f"<DrawBlock x='0' y='1' z='{i}' type='diamond_block' />" \
+                f"<DrawBlock x='1' y='1' z='{i}' type='stone' />" \
+                f"<DrawBlock x='-1' y='1' z='{i}' type='stone' />"
+
+    path += "<DrawBlock x='0' y='2' z='5' type='gold_block' />"
+    path += "<DrawBlock x='0' y='2' z='10' type='emerald_block' />"
+    return path
+
+def drawPath3():
+    path = ""
+    for i in range(5):
+        path += f"<DrawBlock x='0' y='1' z='{i}' type='diamond_block' />" \
+                f"<DrawBlock x='1' y='1' z='{i}' type='stone' />" \
+                f"<DrawBlock x='-1' y='1' z='{i}' type='stone' />"
+    
+    for i in range(6):
+        path += f"<DrawBlock x='{i}' y='1' z='5' type='diamond_block' />" \
+                f"<DrawBlock x='{i+1}' y='1' z='4' type='stone' />" \
+                f"<DrawBlock x='{i+1}' y='1' z='6' type='stone' />"
+    path += "<DrawBlock x='-1' y='1' z='5' type='stone' /><DrawBlock x='-1' y='1' z='6' type='stone' /><DrawBlock x='0' y='1' z='6' type='stone' />"
+
+    path += "<DrawBlock x='0' y='1' z='5' type='gold_block' />"
+    path += "<DrawBlock x='6' y='1' z='5' type='emerald_block' />"
+    return path
+
+
+def drawPath4():
+    path = ""
+    for i in range(7):
+        path += f"<DrawBlock x='0' y='{i+1}' z='{i}' type='diamond_block' />" \
+                f"<DrawBlock x='1' y='1' z='{i}' type='stone' />" \
+                f"<DrawBlock x='-1' y='1' z='{i}' type='stone' />"
+
+    path += "<DrawBlock x='0' y='4' z='3' type='gold_block' />"
+    path += "<DrawBlock x='0' y='7' z='7' type='emerald_block' />"
     return path
 
 

@@ -92,8 +92,8 @@ def GetMissionXML():
                         <ObservationFromFullStats/>
                         <ObservationFromGrid>
                             <Grid name="floorAll">
-                                <min x="-'''+str(int(OBS_SIZE/2))+'''" y="1" z="-'''+str(int(OBS_SIZE/2))+'''"/>
-                                <max x="'''+str(int(OBS_SIZE/2))+'''" y="2" z="'''+str(int(OBS_SIZE/2))+'''"/>
+                                <min x="-'''+str(int(OBS_SIZE/2))+'''" y="-1" z="-'''+str(int(OBS_SIZE/2))+'''"/>
+                                <max x="'''+str(int(OBS_SIZE/2))+'''" y="1" z="'''+str(int(OBS_SIZE/2))+'''"/>
                             </Grid>
                         </ObservationFromGrid>
                         <RewardForTouchingBlockType>
@@ -238,7 +238,7 @@ def get_observation(world_state):
             # Get observation
             grid = observations['floorAll']
             grid_binary = [1 if x == 'diamond_ore' or x == 'lava' else 0 for x in grid]
-            obs = np.reshape(grid_binary, (2, OBS_SIZE, OBS_SIZE))
+            obs = np.reshape(grid_binary, (3, OBS_SIZE, OBS_SIZE))
 
             # Rotate observation with orientation of agent
             yaw = observations['Yaw']
