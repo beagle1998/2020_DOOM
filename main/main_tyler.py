@@ -25,7 +25,7 @@ from torch.utils.data import Dataset, DataLoader
 SIZE = 50
 REWARD_DENSITY = .1
 PENALTY_DENSITY = .02
-OBS_SIZE = 5
+OBS_SIZE = 10
 MAX_EPISODE_STEPS = 100
 MAX_GLOBAL_STEPS = 10000
 REPLAY_BUFFER_SIZE = 10000
@@ -47,7 +47,7 @@ ACTION_DICT = {
 
 OBS_SIZE = 5
 #SIZE = 30
-MAX_EPISODE_STEPS = 50
+MAX_EPISODE_STEPS = 100
 MAX_GLOBAL_STEPS = 10000
 #jumpmove discrete    <DiscreteMovementCommands/>
 ACTION_DICT = {
@@ -83,8 +83,10 @@ class QNetwork(nn.Module):
     def __init__(self, obs_size, action_size, hidden_size=100):
         super().__init__()
         self.net = nn.Sequential(nn.Linear(np.prod(obs_size), hidden_size),
-                                 nn.Hardsigmoid(),
+                                 nn.ReLU(),
+                                 nn.Conv1d(100,100,10),
                                  nn.Linear(hidden_size, action_size)) 
+    
         
     def forward(self, obs):
         """
@@ -152,7 +154,7 @@ def GetMissionXML():
                     <AgentStart>
                         <Placement x="0.5" y="2" z="0.5" pitch="45" yaw="0"/>
                         <Inventory>
-                            <InventoryItem slot="0" type="diamond_pickaxe"/>
+                            <InventoryItem slot="0" type="apple"/>
                         </Inventory>
                     </AgentStart>
                     <AgentHandlers>
@@ -170,7 +172,7 @@ def GetMissionXML():
                             <Block reward="50" type="emerald_block"/>
                             <Block reward="1" type="diamond_block"/>
                             <Block reward="-1" type="grass"/>
-                            <Block reward="-10" type="lava"/>
+                            <Block reward="-1" type="lava"/>
                         </RewardForTouchingBlockType>
                         <AgentQuitFromTouchingBlockType>
                             <Block type="lava"/>
@@ -298,6 +300,9 @@ def get_observation(world_state):
             msg = world_state.observations[-1].text
             observations = json.loads(msg)
 
+            #print(observations['XPos'],observations['YPos'],observations['ZPos'])
+
+
             # Get observation
             grid = observations['floorAll']
             grid_binary = [1 if x == 'diamond_ore' or x == 'lava' else 0 for x in grid]
@@ -376,7 +381,7 @@ def log_returns(steps, returns):
     returns_smooth = np.convolve(returns, box, mode='same')
     plt.clf()
     plt.plot(steps, returns_smooth)
-    plt.title('Diamond Collector')
+    plt.title('Parkour_Bot')
     plt.ylabel('Return')
     plt.xlabel('Steps')
     plt.savefig('returns.png')
