@@ -60,7 +60,7 @@ ACTION_DICT = {
 }
 #jon-
 ACTION_DICT = {
-    0: 'move 1', # Move forward at normal speed
+    0: 'move .5', # Move forward at normal speed
     1: 'move 0', # Stop moving
     2: 'turn -0.5',# Turn to the left
     3: 'turn 0', # Stop turning
