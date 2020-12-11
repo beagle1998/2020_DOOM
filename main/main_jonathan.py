@@ -28,7 +28,10 @@ OBS_SIZE = 5
 MAX_EPISODE_STEPS = 100
 MAX_GLOBAL_STEPS = 10000
 REPLAY_BUFFER_SIZE = 10000
-EPSILON_DECAY = .999
+#EPSILON_DECAY = .999
+### Changing epsilon to a lower number to increase probability of agent referring to DQN
+EPSILON_DECAY = .850
+###
 MIN_EPSILON = .1
 BATCH_SIZE = 128
 GAMMA = .9
@@ -36,6 +39,17 @@ TARGET_UPDATE = 100
 LEARNING_RATE = 1e-4
 START_TRAINING = 500
 LEARN_FREQUENCY = 1
+
+##### Adding boolean values to check if a continuous action is already being done ###
+##
+##isMoving = False
+##isJumping = False
+##isTurningLeft = False
+##isTurningRight = False
+###isNotTurning = True
+##
+#####
+
 ACTION_DICT = {
     0: 'move 1', # Move forward at normal speed
     1: 'move 0', # Stop moving
@@ -59,8 +73,10 @@ class QNetwork(nn.Module):
     def __init__(self, obs_size, action_size, hidden_size=100):
         super().__init__()
         self.net = nn.Sequential(nn.Linear(np.prod(obs_size), hidden_size),
-                                 nn.Hardsigmoid(),
-                                 nn.Linear(hidden_size, action_size)) 
+                                 nn.LeakyReLU(),
+                                 nn.Linear(hidden_size, hidden_size),
+                                 nn.LeakyReLU(),
+                                 nn.Linear(hidden_size, action_size))
         
     def forward(self, obs):
         """
@@ -80,16 +96,47 @@ class QNetwork(nn.Module):
 
 
 # diamond block: path, gold block: checkpoint, emerald block: mission end
-def drawPath():
+def drawPath(pathID):
+    '''
+    This function will draw the path specified by pathID. For personal preference,
+    I am keeping these paths in the same file for ease of editing for testing purposes
+    '''
     path = ''
-    for i in range(10):
-        path += f"<DrawBlock x='0'  y='1' z='{i}' type='diamond_block' />"
-    path += "<DrawBlock x='0'  y='2' z='5' type='gold_block' />"
-    path += "<DrawBlock x='0'  y='1' z='10' type='emerald_block' />"
+    if pathID == 0:
+        for i in range(10):
+            path += f"<DrawBlock x='0'  y='1' z='{i}' type='diamond_block' />"
+        path += "<DrawBlock x='0'  y='2' z='5' type='gold_block' />"
+        path += "<DrawBlock x='0'  y='1' z='10' type='emerald_block' />"
+
+    elif pathID == 1:
+        for i in range(10):
+            path += f"<DrawBlock x='0' y='1' z='{i}' type='diamond_block' />" \
+
+        path += "<DrawBlock x='0' y='2' z='5' type='gold_block' />"
+        path += "<DrawBlock x='0' y='2' z='10' type='emerald_block' />"
+
+    elif pathID == 2:
+        for i in range(5):
+            path += f"<DrawBlock x='0' y='1' z='{i}' type='diamond_block' />" \
+    
+        for i in range(6):
+            path += f"<DrawBlock x='{i}' y='1' z='5' type='diamond_block' />" \
+
+        path += "<DrawBlock x='0' y='1' z='5' type='gold_block' />"
+        path += "<DrawBlock x='6' y='1' z='5' type='emerald_block' />"
+
+    elif pathID == 3:
+        for i in range(7):
+            path += f"<DrawBlock x='0' y='{i+1}' z='{i}' type='diamond_block' />" \
+
+        path += "<DrawBlock x='0' y='4' z='3' type='gold_block' />"
+        path += "<DrawBlock x='0' y='7' z='7' type='emerald_block' />"
+
     return path
 
 
-
+### Will be changing lava reward to be less harsh (-20 -> -5). Hopefully this will stop the agent
+### from jumping and turning in circles since there will be less of a negative reward moving forward
 def GetMissionXML():
 
     return '''<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
@@ -112,18 +159,16 @@ def GetMissionXML():
                         <DrawingDecorator>''' + \
                             "<DrawCuboid x1='{}' x2='{}' y1='2' y2='2' z1='{}' z2='{}' type='air'/>".format(-SIZE, SIZE, -SIZE, SIZE) + \
                             "<DrawCuboid x1='{}' x2='{}' y1='1' y2='1' z1='{}' z2='{}' type='lava'/>".format(-SIZE, SIZE, -SIZE, SIZE) + \
-                            drawPath() + \
+                            drawPath(3) + \
                             '''<DrawBlock x='0'  y='2' z='0' type='air' />
                             <DrawBlock x='0'  y='1' z='0' type='stone' />
-                            
-
                         </DrawingDecorator>
                         <ServerQuitWhenAnyAgentFinishes/>
                     </ServerHandlers>
                 </ServerSection>
 
                 <AgentSection mode="Survival">
-                    <Name>CS175DiamondCollector</Name>
+                    <Name>ParkourBot</Name>
                     <AgentStart>
                         <Placement x="0.5" y="2" z="0.5" pitch="45" yaw="0"/>
                     </AgentStart>
@@ -137,12 +182,13 @@ def GetMissionXML():
                             </Grid>
                         </ObservationFromGrid>
                         <RewardForTouchingBlockType>
-                            <Block reward="50" type="gold_block"/>
-                            <Block reward="100" type="emerald_block"/>
+                            <Block reward="30" type="gold_block"/>
+                            <Block reward="50" type="emerald_block"/>
                             <Block reward="10" type="diamond_block"/>
-                            <Block reward="-50" type="lava"/>
-                            <Block reward="-30" type="stone"/>
+                            <Block reward="-5" type="lava"/>
+                            <Block reward="-10" type="stone"/>
                         </RewardForTouchingBlockType>
+                        <RewardForTimeTaken initialReward="1000" delta="-1" density="PER_TICK"/>
                         <AgentQuitFromTouchingBlockType>
                             <Block type ="emerald_block"/>
                         </AgentQuitFromTouchingBlockType>
@@ -150,13 +196,6 @@ def GetMissionXML():
                     </AgentHandlers>
                 </AgentSection>
             </Mission>'''
-
-
-
-
-
-
-
 
 
 def get_action(obs, q_network, epsilon, allow_break_action):
@@ -172,30 +211,68 @@ def get_action(obs, q_network, epsilon, allow_break_action):
         action (int): chosen action [0, action_size)
     """
     #   TODO: Implement e-greedy policy
+
+##    global isMoving
+##    global isJumping
+##    global isTurningLeft
+##    global isTurningRight
+    
     if random.random() < epsilon:
         return randint(0,7)
+        #print(f"Random: {action}")
+        ### Expanding to ensure random choice doesn't pick reduntant actions, ensuring the agent is always picking a new action (for example, not choosing to jump over and over when it is already jumping)
+        ### Also keeps track of what actions are being taken. For example, if the agent started jumping, it should track that it is currently jumping
+##        while True:
+##            action = randint(0,7)
+##            if (isMoving and action == 0) or (isJumping and action == 5) or (isTurningLeft and action == 2) or (isTurningRight and action == 4):
+##                continue
+##            elif ((not isMoving) and action == 1) or ((not isJumping) and action == 6) or (not (isTurningLeft) and (not isTurningRight) and action == 3):
+##                continue
+##            else:
+##                ### Added print call to be able to see the exact commands chosen when random choice is picked###
+##                print(f"Random: {action}")
+##                if action == 0:
+##                    isMoving = True
+##                elif action == 1:
+##                    isMoving = False
+##                elif action == 2:
+##                    isTurningRight = False
+##                    isTurningLeft = True
+##                elif action == 3:
+##                    isTurningLeft = False
+##                    isTurningRight = False
+##                elif action == 4:
+##                    isTurningLeft = False
+##                    isTurningRight = True
+##                elif action == 5:
+##                    isJumping = True
+##                elif action == 6:
+##                    isJumping = False
+##                return action
 
     with torch.no_grad():
         obs_torch = torch.tensor(obs.copy(), dtype = torch.float).unsqueeze(0)
         action_values = q_network(obs_torch)
 
         action_idx = torch.argmax(action_values).item()
-
-    return action_idx
-    
-##    # Prevent computation graph from being calculated
-##    with torch.no_grad():
-##        # Calculate Q-values fot each action
-##        obs_torch = torch.tensor(obs.copy(), dtype=torch.float).unsqueeze(0)
-##        action_values = q_network(obs_torch)
-##
-##        # Remove attack/mine from possible actions if not facing a diamond
-##        if not allow_break_action:
-##            action_values[0, 3] = -float('inf')  
-##
-##        # Select action with highest Q-value
-##        action_idx = torch.argmax(action_values).item()
-##        
+        
+    #print(f"Chosen: {action_idx}")
+##    if action_idx == 0:
+##        isMoving = True
+##    elif action_idx == 1:
+##        isMoving = False
+##    elif action_idx == 2:
+##        isTurningLeft = True
+##    elif action_idx == 3:
+##        isTurningLeft = False
+##        isTurningRight = False
+##    elif action_idx == 4:
+##        isTurningRight = True
+##    elif action_idx == 5:
+##        isJumping = True
+##    elif action_idx == 6:
+##        isJumping = False
+        
     return action_idx
 
 
@@ -393,7 +470,7 @@ def train(agent_host):
             agent_host.sendCommand(command)
 
             # If your agent isn't registering reward you may need to increase this
-            time.sleep(.1)
+            time.sleep(0.2)
 
             # We have to manually calculate terminal state to give malmo time to register the end of the mission
             # If you see "commands connection is not open. Is the mission running?" you may need to increase this
@@ -461,4 +538,20 @@ if __name__ == '__main__':
         exit(0)
 
     train(agent_host)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
