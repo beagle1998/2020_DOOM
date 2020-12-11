@@ -26,7 +26,8 @@ In the project, we plan to develop an AI agent to parkour through a map of obsta
 
 ![alt text](https://image.winudf.com/v2/image/Y29tLnNmaXZlYXBwcy5wYXJrb3VyX21hcHNfbWluZWNyYWZ0X3BlX3NjcmVlbl82XzE1Mjc1Njg4NDJfMDEx/screen-6.jpg?fakeurl=1&type=.jpg)
 
-
+##Meeting Times
+Monday 1pm, Friday 2pm PST
 
 
 

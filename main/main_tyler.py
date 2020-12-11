@@ -25,7 +25,7 @@ from torch.utils.data import Dataset, DataLoader
 SIZE = 50
 REWARD_DENSITY = .1
 PENALTY_DENSITY = .02
-OBS_SIZE = 10
+OBS_SIZE = 5
 MAX_EPISODE_STEPS = 100
 MAX_GLOBAL_STEPS = 10000
 REPLAY_BUFFER_SIZE = 10000
@@ -79,15 +79,16 @@ class QNetwork(nn.Module):
     #   TODO: Modify network architecture
     #
     #-------------------------------------
-
+    #convolution nn.conv1d(100,128,1)  ?
     def __init__(self, obs_size, action_size, hidden_size=100):
         super().__init__()
-        self.net = nn.Sequential(nn.Linear(np.prod(obs_size), hidden_size),
-                                 nn.ReLU(),
-                                 nn.Conv1d(100,100,10),
-                                 nn.Linear(hidden_size, action_size)) 
-    
         
+        self.net = nn.Sequential(nn.Linear(np.prod(obs_size), hidden_size),
+                                 nn.Hardsigmoid(),
+                                 nn.Linear(hidden_size, hidden_size),
+                                 nn.LeakyReLU(),
+                                 nn.Linear(hidden_size, action_size))
+
     def forward(self, obs):
         """
         Estimate q-values given obs
@@ -107,12 +108,64 @@ class QNetwork(nn.Module):
 
 # diamond block: path, gold block: checkpoint, emerald block: mission end
 def drawPath():
-    path = ''
+
+    return drawPath3()
+
+    #return random.choice([drawStraightPath(), drawPath2(), drawPath3()])
+
+
+def drawStraightPath():
+    path = ""
     for i in range(10):
-        path += f"<DrawBlock x='0'  y='1' z='{i}' type='diamond_block' />"
-    path += "<DrawBlock x='0'  y='2' z='5' type='gold_block' />"
-    path += "<DrawBlock x='0'  y='1' z='10' type='emerald_block' />"
+        path += f"<DrawBlock x='0' y='1' z='{i}' type='diamond_block' />" \
+                f"<DrawBlock x='1' y='1' z='{i}' type='stone' />" \
+                f"<DrawBlock x='-1' y='1' z='{i}' type='stone' />"
+
+    path += "<DrawBlock x='0' y='1' z='5' type='gold_block' />"
+    path += "<DrawBlock x='0' y='1' z='10' type='emerald_block' />"
     return path
+
+
+def drawPath2():
+    path = ""
+    for i in range(10):
+        path += f"<DrawBlock x='0' y='1' z='{i}' type='diamond_block' />" \
+                f"<DrawBlock x='1' y='1' z='{i}' type='stone' />" \
+                f"<DrawBlock x='-1' y='1' z='{i}' type='stone' />"
+
+    path += "<DrawBlock x='0' y='2' z='5' type='gold_block' />"
+    path += "<DrawBlock x='0' y='2' z='10' type='emerald_block' />"
+    return path
+
+def drawPath3():
+    path = ""
+    for i in range(5):
+        path += f"<DrawBlock x='0' y='1' z='{i}' type='diamond_block' />" \
+                f"<DrawBlock x='1' y='1' z='{i}' type='stone' />" \
+                f"<DrawBlock x='-1' y='1' z='{i}' type='stone' />"
+    
+    for i in range(6):
+        path += f"<DrawBlock x='{i}' y='1' z='5' type='diamond_block' />" \
+                f"<DrawBlock x='{i+1}' y='1' z='4' type='stone' />" \
+                f"<DrawBlock x='{i+1}' y='1' z='6' type='stone' />"
+    path += "<DrawBlock x='-1' y='1' z='5' type='stone' /><DrawBlock x='-1' y='1' z='6' type='stone' /><DrawBlock x='0' y='1' z='6' type='stone' />"
+
+    path += "<DrawBlock x='0' y='1' z='5' type='gold_block' />"
+    path += "<DrawBlock x='6' y='1' z='5' type='emerald_block' />"
+    return path
+
+
+def drawPath4():
+    path = ""
+    for i in range(7):
+        path += f"<DrawBlock x='0' y='{i+1}' z='{i}' type='diamond_block' />" \
+                f"<DrawBlock x='1' y='1' z='{i}' type='stone' />" \
+                f"<DrawBlock x='-1' y='1' z='{i}' type='stone' />"
+
+    path += "<DrawBlock x='0' y='4' z='3' type='gold_block' />"
+    path += "<DrawBlock x='0' y='7' z='7' type='emerald_block' />"
+    return path
+
 
 
 
@@ -447,7 +500,8 @@ def train(agent_host):
             # Take step
 
             #agent_host.sendCommand("move .5")
-            
+            if command!="turn .5" and command!="turn -.5":
+                agent_host.sendCommand("turn 0")
             agent_host.sendCommand(command)
 
             # If your agent isn't registering reward you may need to increase this
