@@ -47,7 +47,7 @@ ACTION_DICT = {
 
 OBS_SIZE = 5
 #SIZE = 30
-MAX_EPISODE_STEPS = 50
+MAX_EPISODE_STEPS = 100
 MAX_GLOBAL_STEPS = 10000
 #jumpmove discrete    <DiscreteMovementCommands/>
 ACTION_DICT = {
@@ -79,13 +79,16 @@ class QNetwork(nn.Module):
     #   TODO: Modify network architecture
     #
     #-------------------------------------
-
+    #convolution nn.conv1d(100,128,1)  ?
     def __init__(self, obs_size, action_size, hidden_size=100):
         super().__init__()
+        
         self.net = nn.Sequential(nn.Linear(np.prod(obs_size), hidden_size),
                                  nn.Hardsigmoid(),
-                                 nn.Linear(hidden_size, action_size)) 
-        
+                                 nn.Linear(hidden_size, hidden_size),
+                                 nn.LeakyReLU(),
+                                 nn.Linear(hidden_size, action_size))
+
     def forward(self, obs):
         """
         Estimate q-values given obs
@@ -105,12 +108,64 @@ class QNetwork(nn.Module):
 
 # diamond block: path, gold block: checkpoint, emerald block: mission end
 def drawPath():
-    path = ''
+
+    return drawPath3()
+
+    #return random.choice([drawStraightPath(), drawPath2(), drawPath3()])
+
+
+def drawStraightPath():
+    path = ""
     for i in range(10):
-        path += f"<DrawBlock x='0'  y='1' z='{i}' type='diamond_block' />"
-    path += "<DrawBlock x='0'  y='2' z='5' type='gold_block' />"
-    path += "<DrawBlock x='0'  y='1' z='10' type='emerald_block' />"
+        path += f"<DrawBlock x='0' y='1' z='{i}' type='diamond_block' />" \
+                f"<DrawBlock x='1' y='1' z='{i}' type='stone' />" \
+                f"<DrawBlock x='-1' y='1' z='{i}' type='stone' />"
+
+    path += "<DrawBlock x='0' y='1' z='5' type='gold_block' />"
+    path += "<DrawBlock x='0' y='1' z='10' type='emerald_block' />"
     return path
+
+
+def drawPath2():
+    path = ""
+    for i in range(10):
+        path += f"<DrawBlock x='0' y='1' z='{i}' type='diamond_block' />" \
+                f"<DrawBlock x='1' y='1' z='{i}' type='stone' />" \
+                f"<DrawBlock x='-1' y='1' z='{i}' type='stone' />"
+
+    path += "<DrawBlock x='0' y='2' z='5' type='gold_block' />"
+    path += "<DrawBlock x='0' y='2' z='10' type='emerald_block' />"
+    return path
+
+def drawPath3():
+    path = ""
+    for i in range(5):
+        path += f"<DrawBlock x='0' y='1' z='{i}' type='diamond_block' />" \
+                f"<DrawBlock x='1' y='1' z='{i}' type='stone' />" \
+                f"<DrawBlock x='-1' y='1' z='{i}' type='stone' />"
+    
+    for i in range(6):
+        path += f"<DrawBlock x='{i}' y='1' z='5' type='diamond_block' />" \
+                f"<DrawBlock x='{i+1}' y='1' z='4' type='stone' />" \
+                f"<DrawBlock x='{i+1}' y='1' z='6' type='stone' />"
+    path += "<DrawBlock x='-1' y='1' z='5' type='stone' /><DrawBlock x='-1' y='1' z='6' type='stone' /><DrawBlock x='0' y='1' z='6' type='stone' />"
+
+    path += "<DrawBlock x='0' y='1' z='5' type='gold_block' />"
+    path += "<DrawBlock x='6' y='1' z='5' type='emerald_block' />"
+    return path
+
+
+def drawPath4():
+    path = ""
+    for i in range(7):
+        path += f"<DrawBlock x='0' y='{i+1}' z='{i}' type='diamond_block' />" \
+                f"<DrawBlock x='1' y='1' z='{i}' type='stone' />" \
+                f"<DrawBlock x='-1' y='1' z='{i}' type='stone' />"
+
+    path += "<DrawBlock x='0' y='4' z='3' type='gold_block' />"
+    path += "<DrawBlock x='0' y='7' z='7' type='emerald_block' />"
+    return path
+
 
 
 
@@ -152,7 +207,7 @@ def GetMissionXML():
                     <AgentStart>
                         <Placement x="0.5" y="2" z="0.5" pitch="45" yaw="0"/>
                         <Inventory>
-                            <InventoryItem slot="0" type="diamond_pickaxe"/>
+                            <InventoryItem slot="0" type="apple"/>
                         </Inventory>
                     </AgentStart>
                     <AgentHandlers>
@@ -170,7 +225,7 @@ def GetMissionXML():
                             <Block reward="50" type="emerald_block"/>
                             <Block reward="1" type="diamond_block"/>
                             <Block reward="-1" type="grass"/>
-                            <Block reward="-10" type="lava"/>
+                            <Block reward="-1" type="lava"/>
                         </RewardForTouchingBlockType>
                         <AgentQuitFromTouchingBlockType>
                             <Block type="lava"/>
@@ -298,6 +353,9 @@ def get_observation(world_state):
             msg = world_state.observations[-1].text
             observations = json.loads(msg)
 
+            #print(observations['XPos'],observations['YPos'],observations['ZPos'])
+
+
             # Get observation
             grid = observations['floorAll']
             grid_binary = [1 if x == 'diamond_ore' or x == 'lava' else 0 for x in grid]
@@ -376,7 +434,7 @@ def log_returns(steps, returns):
     returns_smooth = np.convolve(returns, box, mode='same')
     plt.clf()
     plt.plot(steps, returns_smooth)
-    plt.title('Diamond Collector')
+    plt.title('Parkour_Bot')
     plt.ylabel('Return')
     plt.xlabel('Steps')
     plt.savefig('returns.png')
@@ -442,7 +500,8 @@ def train(agent_host):
             # Take step
 
             #agent_host.sendCommand("move .5")
-            
+            if command!="turn .5" and command!="turn -.5":
+                agent_host.sendCommand("turn 0")
             agent_host.sendCommand(command)
 
             # If your agent isn't registering reward you may need to increase this
