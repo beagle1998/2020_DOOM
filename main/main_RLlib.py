@@ -12,15 +12,15 @@ from numpy.random import randint
 
 import gym, ray
 from gym.spaces import Box
-from ray.rllib.agents import ppo
+from ray.rllib.agents import ppo, dqn
 
 class ParkourBot(gym.Env):
 
     def __init__(self, env_config):
         # Static Parameters
         self.size = 50
-        self.reward_density = .1
-        self.penalty_density = .02
+        #self.reward_density = .1
+        #self.penalty_density = .02
         self.obs_size = 5
         self.max_episode_steps = 100
         self.log_frequency = 10
@@ -87,11 +87,26 @@ class ParkourBot(gym.Env):
         """
 
         # Get Action
+##        if action[0] > 0:
+##            self.agent_host.sendCommand('turn 0')
+##            self.agent_host.sendCommand('move 1')
+##        else:
+##            self.agent_host.sendCommand('move 0')
+##
+##        if action[1] > 0:
+##            self.agent_host.sendCommand('turn 1')
+##        else:
+##            self.agent_host.sendCommand('turn -1')
+##
+        if action[0] < 0:
+            positiveAction = -(action[0])
+            self.agent_host.sendCommand('move {:30.1f}'.format(positiveAction))
+            #self.agent_host.sendCommand('move 0')
         if action[2] > 0:
             self.agent_host.sendCommand('jump 1')
         else:
             self.agent_host.sendCommand('jump 0')
-        self.agent_host.sendCommand('move {:30.1f}'.format(action[0]))
+        #self.agent_host.sendCommand('move {:30.1f}'.format(action[0]))
         self.agent_host.sendCommand('turn {:30.1f}'.format(action[1]))
         
         time.sleep(.2)
@@ -269,7 +284,8 @@ class ParkourBot(gym.Env):
 
                 # Get Observation
                 grid = observations['floorAll']
-                grid_binary = [1 if x == 'diamond_block' or x == 'gold_block' or x == 'emerald_block' or x == 'lava' else 0 for x in grid]
+                #grid_binary = [1 if x == 'diamond_block' or x == 'gold_block' or x == 'emerald_block' or x == 'lava' else 0 for x in grid]
+                grid_binary = [1 if x == 'diamond_block' or x == 'lava' else 0 for x in grid]
 
                 obs = np.reshape(grid_binary, (2, self.obs_size, self.obs_size))
 
@@ -296,7 +312,7 @@ class ParkourBot(gym.Env):
         returns_smooth = np.convolve(self.returns, box, mode='same')
         plt.clf()
         plt.plot(self.steps, returns_smooth)
-        plt.title('ParkoutBot')
+        plt.title('ParkourBot')
         plt.ylabel('Return')
         plt.xlabel('Steps')
         plt.savefig('returns.png')
@@ -310,10 +326,16 @@ if __name__ == '__main__':
     ray.init()
     trainer = ppo.PPOTrainer(env=ParkourBot, config={
         'env_config': {},           # No environment parameters to configure
-        'framework': 'torch',       # Use pyotrch instead of tensorflow
+        'framework': 'torch',       # Use pytorch instead of tensorflow
         'num_gpus': 0,              # We aren't using GPUs
         'num_workers': 0            # We aren't using parallelism
     })
+##    trainer = dqn.DQNTrainer(env=ParkourBot, config={
+##        'env_config': {},
+##        'framework': 'torch',
+##        'num_gpus': 0,
+##        'num_workers': 0
+##        })
 
     while True:
         print(trainer.train())
