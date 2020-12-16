@@ -102,6 +102,9 @@ class ParkourBot(gym.Env):
             positiveAction = -(action[0])
             self.agent_host.sendCommand('move {:30.1f}'.format(positiveAction))
             #self.agent_host.sendCommand('move 0')
+        ##adding this else statement to allow initial positive values and 0 values. Error on my part for not including it earlier
+        else:
+            self.agent_host.sendCommand('move {:30.1f}'.format(action[0]))
         if action[2] > 0:
             self.agent_host.sendCommand('jump 1')
         else:
