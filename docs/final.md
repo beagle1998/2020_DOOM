@@ -3,9 +3,10 @@ layout: default
 title: Final Report
 ---
 
-
+# {{ page.title }}
 
 ## Video 
+	placeholder
 
 ## Project Summary
 	The goal of this project is to have an agent learn to run through a "parkour" map. In other words, the agent should be able to traverse a designated path that may contain obstacles such as raised platforms or stairs to reach a desired destination. More specifically, the agent would start on a stone block and learn to go through a diamond path while avoiding obstacles in order to reach checkpoints represented by gold blocks and the end goal represented by an emerald block.
