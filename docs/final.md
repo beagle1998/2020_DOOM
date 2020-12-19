@@ -21,7 +21,12 @@ title: Final Report
 ## Evaluation
 	After a period of 24 hours of time, with some opting for slightly longer periods, the return graphs showed a positive trend which seemed to show that the agent was learning slowly but surely through this extended training. When observing the agent’s behavior during training, this finding was supported, as after 24 hours, the agent would be able to find the end goal fairly often. The end goal was found much more often than it could at the beginning of the training.
 	
-![Path1 Returns](FinalReturns/Path1/returns_26 20hour.png).
+![Path1 Returns](FinalReturns/Path1/returns_26 20hour.png)
+![Path1 EndGoal Count](FinalReturns/Path1/returns_endpoints_count.png)
+![Path2 Returns](FinalReturns/Path2/returns.png)
+![Path2 EndGoal Count](FinalReturns/Path2/returns_path2_endpoint.png)
+![Path4 Returns](FinalReturns/Path4/returns.png)
+![Path4 EndGoal Count](FinalReturns/Path4/returns_path4_endpoint.png)
 
 
 	Due to the wide range of return values that could be found due to the wide variety of changes that could be made to the rewards, it is clear that the primary criteria for evaluating the agent is external behavior after extended training and not the return values on their own. The returns did show a positive trend as time went on, but the agent was still making many mistakes here and there even after training. It is assumed that these errors are within reasonable limits given than the agent is in the middle of training while logging these returns and therefore is expected to explore and fail often in order to learn as much as possible about its immense domain of states and actions. The ability of the agent to find the end goal fairly often while still training suggests that the agent has learned the given path and training it for even longer periods of time would risk overfitting it to a certain path.
