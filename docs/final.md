@@ -6,10 +6,9 @@ title: Final Report
 # {{ page.title }}
 
 ## Video 
-	placeholder
-
+	<iframe width="560" height="315" src="https://www.youtube.com/embed/KvLh1fjiynI" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 ## Project Summary
-	The goal of this project is to have an agent learn to run through a "parkour" map. In other words, the agent should be able to traverse a designated path that may contain obstacles such as raised platforms or stairs to reach a desired destination. More specifically, the agent would start on a stone block and learn to go through a diamond path while avoiding obstacles in order to reach checkpoints represented by gold blocks and the end goal represented by an emerald block.
+	The goal of this project was to create a “parkour” Agent that could both traverse a three-dimensional path that may contain obstacles such as raised platforms or stairs to reach a desired destination. The agent would utilize deep reinforcement learning to optimize its actions, in order to reach the end goal in fewer steps and shorter times. More specifically, the agent would start on a stone block and learn to go through a diamond path while avoiding obstacles in order to reach checkpoints represented by gold blocks and the end goal represented by an emerald block.
 	The desired outcome would be for the agent to use continuous movement commands in order to traverse the path with the same range of movement as a human player, as opposed to the limited range of discrete movement commands. Using reinforcement learning, the agent should be able to develop a sense for the path that would allow it to traverse the path safely and as quickly as possible while gaining the highest reward overall. This project is also separate from projects relating to pathfinding algorithms as it is intended to learn a specified path/course as opposed to finding its own calculated path.
 
 ## Approaches
@@ -19,15 +18,26 @@ title: Final Report
 
 ## Evaluation
 	After a period of 24 hours of time, with some opting for slightly longer periods, the return graphs showed a positive trend which seemed to show that the agent was learning slowly but surely through this extended training. When observing the agent’s behavior during training, this finding was supported, as after 24 hours, the agent would be able to find the end goal fairly often. The end goal was found much more often than it could at the beginning of the training.
-	[Insert return.png file for any path(s) here. Optionally screenshots of agent at end goal as well].
+	![Path1 Returns](FinalReturns/Path1/returns_26%20hour.png).
 	Due to the wide range of return values that could be found due to the wide variety of changes that could be made to the rewards, it is clear that the primary criteria for evaluating the agent is external behavior after extended training and not the return values on their own. The returns did show a positive trend as time went on, but the agent was still making many mistakes here and there even after training. It is assumed that these errors are within reasonable limits given than the agent is in the middle of training while logging these returns and therefore is expected to explore and fail often in order to learn as much as possible about its immense domain of states and actions. The ability of the agent to find the end goal fairly often while still training suggests that the agent has learned the given path and training it for even longer periods of time would risk overfitting it to a certain path.
 	For the purposes of this project, the problem at hand has been solved as the returns and external behavior of the agent both suggest its ability to learn a path with the aid of checkpoints and end goal rewards. This project, of course, can still benefit from future improvement. For example, with more time, it would be possible to rigorously test different parameters as well as different networks among a wide range of randomly generated paths, which, after training across a large number of paths for extended periods, may allow the algorithm to become more generalized. This would evolve this agent from one that is able to learn any path to one that does not have to learn a new path and can instead intuit the correct actions to take to get to an end goal efficiently. However this would require a vast amount of testing time and experimentation with new neural networks and algorithms which would take it outside the scope of this class. In any case, this project has shown success as well as promise.
 
 ## References
-	RLlib: https://docs.ray.io/en/latest/rllib.html
-	PPO: https://spinningup.openai.com/en/latest/algorithms/ppo.html
-	Video on Reinforcement Learning from TA Kolby Nottingham: https://www.youtube.com/watch?v=v_cDSTfk5A0&feature=youtu.be
-	Pytorch Documentation: https://pytorch.org/docs/stable/index.html
+	PPOtrainer
+	https://spinningup.openai.com/en/latest/algorithms/ppo.html
+
+	Malmo Reinforcement Learning(RLIB)
+	https://www.youtube.com/watch?v=v_cDSTfk5A0&feature=youtu.be
+
+	Gym API
+	https://www.youtube.com/watch?v=rTVYgBzMNPo&feature=youtu.be
+	
+	RLlib
+	https://docs.ray.io/en/latest/rllib.html
+
+	Pytorch Documentation
+	https://pytorch.org/docs/stable/index.html
+
 
 
 
