@@ -20,8 +20,9 @@ title: Final Report
 
 ## Evaluation
 	After a period of 24 hours of time, with some opting for slightly longer periods, the return graphs showed a positive trend which seemed to show that the agent was learning slowly but surely through this extended training. When observing the agent’s behavior during training, this finding was supported, as after 24 hours, the agent would be able to find the end goal fairly often. The end goal was found much more often than it could at the beginning of the training.
+
 	
-![Path1 Returns](FinalReturns/Path1/returns_26 hour.png) ![Path1 EndGoal Count](FinalReturns/Path1/returns_endpoints_count.png)
+![Path1 Returns](FinalReturns/Path1/returns_26_hour.png) ![Path1 EndGoal Count](FinalReturns/Path1/returns_endpoints_count.png)
 
 
 ![Path2 Returns](FinalReturns/Path2/returns.png) ![Path2 EndGoal Count](FinalReturns/Path2/returns_path2_endpoint.png)
